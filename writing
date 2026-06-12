@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Writings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --surface: #fffdf9;
+      --ink: #1c1917;
+      --muted: #78716c;
+      --accent: #b45309;
+      --accent-soft: #fef3c7;
+      --border: #e7e0d4;
+      --shadow: 0 4px 24px rgba(28, 25, 23, 0.06);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "DM Sans", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(180, 83, 9, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(28, 25, 23, 0.04) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .layout {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    header {
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .eyebrow {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(2.5rem, 6vw, 3.5rem);
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .tagline {
+      font-size: 1.05rem;
+      color: var(--muted);
+      font-style: italic;
+      font-family: "Cormorant Garamond", Georgia, serif;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--ink);
+      color: var(--surface);
+    }
+
+    .btn-primary:hover {
+      background: #292524;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface);
+      color: var(--ink);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      font-size: 0.85rem;
+      padding: 8px 14px;
+    }
+
+    .btn-danger:hover {
+      background: #fef2f2;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .writings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .writing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      cursor: pointer;
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
+    }
+
+    .writing-card:hover {
+      box-shadow: var(--shadow);
+      border-color: #d6cfc2;
+      transform: translateY(-1px);
+    }
+
+    .writing-card h3 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .writing-card .date {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .writing-card .preview {
+      font-size: 0.95rem;
+      color: var(--muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 56px 24px;
+      background: var(--surface);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      color: var(--muted);
+    }
+
+    .empty-state p:first-child {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1.4rem;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .panel {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      gap: 16px;
+    }
+
+    .panel-header h2 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.03em;
+    }
+
+    input, textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--ink);
+      margin-bottom: 18px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    textarea {
+      min-height: 220px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .reading-view .meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .reading-view .body {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 1.2rem;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    .reading-actions {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    footer {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      .layout {
+        padding: 32px 16px 64px;
+      }
+
+      .panel {
+        padding: 20px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <header>
+      <p class="eyebrow">Personal journal</p>
+      <h1 contenteditable="true" id="site-name" spellcheck="false">Your Name</h1>
+      <p class="tagline" contenteditable="true" id="site-tagline" spellcheck="false">A quiet place for your thoughts and writings.</p>
+    </header>
+
+    <div class="toolbar" id="toolbar">
+      <button class="btn-primary" id="btn-new">+ New writing</button>
+    </div>
+
+    <!-- List view -->
+    <section id="list-view">
+      <p class="section-label">Your writings</p>
+      <div class="writings-list" id="writings-list"></div>
+    </section>
+
+    <!-- Editor -->
+    <section class="panel" id="editor-panel">
+      <div class="panel-header">
+        <h2 id="editor-title-label">New writing</h2>
+        <button class="btn-ghost" id="btn-cancel-edit">Cancel</button>
+      </div>
+      <form id="writing-form">
+        <label for="title">Title</label>
+        <input type="text" id="title" placeholder="Give your piece a title" required>
+
+        <label for="body">Your writing</label>
+        <textarea id="body" placeholder="Start writing here..." required></textarea>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Save</button>
+          <button type="button" class="btn-ghost" id="btn-cancel-form">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Reading view -->
+    <section class="panel reading-view" id="reading-panel">
+      <div class="panel-header">
+        <h2 id="read-title"></h2>
+        <button class="btn-ghost" id="btn-back">← Back</button>
+      </div>
+      <p class="meta" id="read-date"></p>
+      <div class="body" id="read-body"></div>
+      <div class="reading-actions">
+        <button class="btn-ghost" id="btn-edit">Edit</button>
+        <button class="btn-danger" id="btn-delete">Delete</button>
+      </div>
+    </section>
+
+    <footer>
+      Writings are saved in this browser only. Open this file on another device to start fresh.
+    </footer>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "personal-writings";
+    const PROFILE_KEY = "personal-profile";
+
+    let writings = [];
+    let currentId = null;
+    let editingId = null;
+
+    function loadWritings() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        writings = data ? JSON.parse(data) : [];
+      } catch {
+        writings = [];
+      }
+    }
+
+    function saveWritings() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(writings));
+    }
+
+    function loadProfile() {
+      try {
+        const data = localStorage.getItem(PROFILE_KEY);
+        if (data) {
+          const profile = JSON.parse(data);
+          if (profile.name) document.getElementById("site-name").textContent = profile.name;
+          if (profile.tagline) document.getElementById("site-tagline").textContent = profile.tagline;
+        }
+      } catch { /* ignore */ }
+    }
+
+    function saveProfile() {
+      localStorage.setItem(PROFILE_KEY, JSON.stringify({
+        name: document.getElementById("site-name").textContent.trim(),
+        tagline: document.getElementById("site-tagline").textContent.trim(),
+      }));
+    }
+
+    function formatDate(iso) {
+      return new Date(iso).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    }
+
+    function showView(view) {
+      document.getElementById("list-view").style.display = view === "list" ? "block" : "none";
+      document.getElementById("toolbar").style.display = view === "list" ? "flex" : "none";
+      document.getElementById("editor-panel").classList.toggle("active", view === "editor");
+      document.getElementById("reading-panel").classList.toggle("active", view === "reading");
+    }
+
+    function renderList() {
+      const list = document.getElementById("writings-list");
+
+      if (writings.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <p>No writings yet</p>
+            <p>Click "New writing" to add your first piece.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const sorted = [...writings].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+      list.innerHTML = sorted.map(w => `
+        <article class="writing-card" data-id="${w.id}">
+          <h3>${escapeHtml(w.title)}</h3>
+          <p class="date">${formatDate(w.updatedAt)}</p>
+          <p class="preview">${escapeHtml(w.body)}</p>
+        </article>
+      `).join("");
+
+      list.querySelectorAll(".writing-card").forEach(card => {
+        card.addEventListener("click", () => openReading(card.dataset.id));
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function openEditor(id = null) {
+      editingId = id;
+      const form = document.getElementById("writing-form");
+      form.reset();
+
+      if (id) {
+        const w = writings.find(item => item.id === id);
+        if (!w) return;
+        document.getElementById("editor-title-label").textContent = "Edit writing";
+        document.getElementById("title").value = w.title;
+        document.getElementById("body").value = w.body;
+      } else {
+        document.getElementById("editor-title-label").textContent = "New writing";
+      }
+
+      showView("editor");
+      document.getElementById("title").focus();
+    }
+
+    function openReading(id) {
+      const w = writings.find(item => item.id === id);
+      if (!w) return;
+
+      currentId = id;
+      document.getElementById("read-title").textContent = w.title;
+      document.getElementById("read-date").textContent = formatDate(w.updatedAt);
+      document.getElementById("read-body").textContent = w.body;
+      showView("reading");
+    }
+
+    document.getElementById("btn-new").addEventListener("click", () => openEditor());
+
+    document.getElementById("btn-cancel-edit").addEventListener("click", () => showView("list"));
+    document.getElementById("btn-cancel-form").addEventListener("click", () => showView("list"));
+
+    document.getElementById("writing-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById("title").value.trim();
+      const body = document.getElementById("body").value.trim();
+      if (!title || !body) return;
+
+      const now = new Date().toISOString();
+
+      if (editingId) {
+        const w = writings.find(item => item.id === editingId);
+        if (w) {
+          w.title = title;
+          w.body = body;
+          w.updatedAt = now;
+        }
+      } else {
+        writings.push({
+          id: crypto.randomUUID(),
+          title,
+          body,
+          createdAt: now,
+          updatedAt: now,
+        });
+      }
+
+      saveWritings();
+      renderList();
+      showView("list");
+      editingId = null;
+    });
+
+    document.getElementById("btn-back").addEventListener("click", () => {
+      currentId = null;
+      showView("list");
+    });
+
+    document.getElementById("btn-edit").addEventListener("click", () => {
+      if (currentId) openEditor(currentId);
+    });
+
+    document.getElementById("btn-delete").addEventListener("click", () => {
+      if (!currentId) return;
+      if (!confirm("Delete this writing? This cannot be undone.")) return;
+
+      writings = writings.filter(w => w.id !== currentId);
+      saveWritings();
+      renderList();
+      currentId = null;
+      showView("list");
+    });
+
+    document.getElementById("site-name").addEventListener("blur", saveProfile);
+    document.getElementById("site-tagline").addEventListener("blur", saveProfile);
+
+    loadWritings();
+    loadProfile();
+    renderList();
+    showView("list");
+  </script>
+</body>
+</html>
