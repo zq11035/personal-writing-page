@@ -1,2 +1,2 @@
-An html for writing essays
-first vibe coding for fun
+An html for writing essays.
+My first vibe coding for fun
